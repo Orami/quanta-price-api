@@ -1,0 +1,36 @@
+{
+  "name": "Quanta",
+  "symbol": "QUANTA",
+  "address": "0x5aCdC563450Cc35055D7344287C327FAFb2B371A",
+  "decimals": 18,
+  "chain": "base",
+  "chainId": 8453,
+  "description": "QUANTA token on Base - Integrated with Virtuals Protocol",
+  "logo": {
+    "src": "",
+    "width": "256",
+    "height": "256",
+    "format": "png"
+  },
+  "links": {
+    "website": "",
+    "twitter": "",
+    "telegram": "",
+    "discord": "",
+    "medium": "",
+    "github": ""
+  },
+  "tags": ["defi", "virtuals-protocol", "base"],
+  "pools": [
+    {
+      "dex": "uniswap-v2",
+      "pair": "QUANTA/VIRTUAL",
+      "address": "",
+      "chain": "base"
+    }
+  ],
+  "priceFeeds": {
+    "api": "https://your-domain.com/api/price",
+    "oracle": ""
+  }
+}

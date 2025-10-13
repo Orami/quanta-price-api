@@ -1,0 +1,49 @@
+{
+  "name": "quanta-price-oracle",
+  "version": "1.0.0",
+  "description": "Price oracle and API service for QUANTA token on Base",
+  "main": "api/priceAPI.ts",
+  "scripts": {
+    "start": "ts-node api/simpleAPI.ts",
+    "start:complex": "ts-node api/priceAPI.ts",
+    "start:moralis": "ts-node api/moralisAPI.ts",
+    "dev": "nodemon api/priceAPI.ts",
+    "dev:moralis": "nodemon api/moralisAPI.ts",
+    "price": "ts-node services/simplePriceService.ts",
+    "price:direct": "ts-node services/directPriceService.ts",
+    "price:ethers": "ts-node services/priceService.ts",
+    "price:moralis": "ts-node services/moralisPriceService.ts",
+    "deploy": "hardhat run scripts/deploy.ts --network base",
+    "compile": "hardhat compile",
+    "test": "hardhat test"
+  },
+  "keywords": [
+    "quanta",
+    "base",
+    "price-oracle",
+    "defi",
+    "moralis",
+    "virtuals-protocol"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "ethers": "^6.9.0",
+    "dotenv": "^16.3.1",
+    "moralis": "^2.27.2",
+    "@moralisweb3/common-evm-utils": "^2.27.2",
+    "axios": "^1.6.5"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/cors": "^2.8.17",
+    "@types/node": "^20.10.6",
+    "ts-node": "^10.9.2",
+    "nodemon": "^3.0.2",
+    "typescript": "^5.3.3",
+    "hardhat": "^2.19.4",
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0"
+  }
+}
