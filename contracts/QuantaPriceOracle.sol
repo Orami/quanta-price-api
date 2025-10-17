@@ -32,7 +32,7 @@ interface IERC20 {
 }
 
 contract QuantaPriceOracle {
-    address public constant QUANTA_TOKEN = 0x5aCdC563450Cc35055D7344287C327FAFb2B371A;
+    address public constant QUANTA_TOKEN = 0x5ACDC563450cC35055d7344287C327fafB2b371A;
 
     // Add your liquidity pool addresses here
     // These should be the actual QUANTA pairs (e.g., QUANTA/VIRTUAL, QUANTA/WETH)
