@@ -44,3 +44,11 @@ pnpm-debug.log*
 .cache/
 temp/
 tmp/
+
+# Images in root (move to public/ folder)
+/*.png
+/*.jpg
+/*.jpeg
+/*.webp
+/*.ico
+!public/
