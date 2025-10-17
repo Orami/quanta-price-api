@@ -6,6 +6,7 @@
 
 import express, { Request, Response } from 'express';
 import cors from 'cors';
+import path from 'path';
 import { SimplePriceService } from '../services/simplePriceService';
 import * as dotenv from 'dotenv';
 
@@ -17,7 +18,7 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, '../public')));
 
 // Initialize price service
 const priceService = new SimplePriceService();
@@ -46,7 +47,7 @@ async function getCachedPrice() {
  * Serve favicon
  */
 app.get('/favicon.ico', (req: Request, res: Response) => {
-  res.sendFile('favicon.png', { root: 'public' });
+  res.sendFile(path.join(__dirname, '../public/favicon.png'));
 });
 
 /**
