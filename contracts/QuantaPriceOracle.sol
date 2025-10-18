@@ -31,6 +31,10 @@ interface IERC20 {
     function decimals() external view returns (uint8);
 }
 
+interface IVirtualsPool {
+    function getReserves() external view returns (uint256 reserve0, uint256 reserve1);
+}
+
 contract QuantaPriceOracle {
     address public constant QUANTA_TOKEN = 0x5ACDC563450cC35055d7344287C327fafB2b371A;
 
@@ -38,11 +42,12 @@ contract QuantaPriceOracle {
     // These should be the actual QUANTA pairs (e.g., QUANTA/VIRTUAL, QUANTA/WETH)
     address[] public v2Pools;
     address[] public v3Pools;
+    address[] public virtualsPools;
 
     address public owner;
 
-    event PoolAdded(address indexed pool, bool isV3);
-    event PoolRemoved(address indexed pool, bool isV3);
+    event PoolAdded(address indexed pool, string poolType);
+    event PoolRemoved(address indexed pool, string poolType);
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Not owner");
@@ -58,7 +63,7 @@ contract QuantaPriceOracle {
      */
     function addV2Pool(address pool) external onlyOwner {
         v2Pools.push(pool);
-        emit PoolAdded(pool, false);
+        emit PoolAdded(pool, "v2");
     }
 
     /**
@@ -66,7 +71,15 @@ contract QuantaPriceOracle {
      */
     function addV3Pool(address pool) external onlyOwner {
         v3Pools.push(pool);
-        emit PoolAdded(pool, true);
+        emit PoolAdded(pool, "v3");
+    }
+
+    /**
+     * @notice Add a Virtuals.io pool for price calculation
+     */
+    function addVirtualsPool(address pool) external onlyOwner {
+        virtualsPools.push(pool);
+        emit PoolAdded(pool, "virtuals");
     }
 
     /**
@@ -127,6 +140,23 @@ contract QuantaPriceOracle {
     }
 
     /**
+     * @notice Get price from Virtuals.io pool
+     * @param pool The Virtuals pool address
+     * @return price The price in 18 decimals
+     * @dev Assumes reserve0 is QUANTA and both tokens have 18 decimals
+     */
+    function getVirtualsPrice(address pool) public view returns (uint256 price) {
+        IVirtualsPool virtualsPool = IVirtualsPool(pool);
+        (uint256 reserve0, uint256 reserve1) = virtualsPool.getReserves();
+
+        // Virtuals pools have QUANTA as reserve0, paired token as reserve1
+        // Price = reserve1 / reserve0 (both are 18 decimals)
+        price = (reserve1 * 1e18) / reserve0;
+
+        return price;
+    }
+
+    /**
      * @notice Get liquidity-weighted average price across all pools
      * @return avgPrice The weighted average price in 18 decimals
      * @return totalLiquidity The total liquidity across all pools
@@ -161,6 +191,17 @@ contract QuantaPriceOracle {
             totalLiquidity += 1e18;
         }
 
+        // Calculate Virtuals pools
+        for (uint i = 0; i < virtualsPools.length; i++) {
+            IVirtualsPool virtualsPool = IVirtualsPool(virtualsPools[i]);
+            (uint256 reserve0, ) = virtualsPool.getReserves();
+
+            // reserve0 is QUANTA liquidity
+            uint256 price = getVirtualsPrice(virtualsPools[i]);
+            weightedSum += price * reserve0;
+            totalLiquidity += reserve0;
+        }
+
         if (totalLiquidity > 0) {
             avgPrice = weightedSum / totalLiquidity;
         }
@@ -192,13 +233,28 @@ contract QuantaPriceOracle {
             }
         }
 
+        // Check Virtuals pools
+        for (uint i = 0; i < virtualsPools.length; i++) {
+            IVirtualsPool virtualsPool = IVirtualsPool(virtualsPools[i]);
+            (uint256 reserve0, ) = virtualsPool.getReserves();
+
+            if (reserve0 > maxLiquidity) {
+                maxLiquidity = reserve0;
+                bestPrice = getVirtualsPrice(virtualsPools[i]);
+            }
+        }
+
         return bestPrice;
     }
 
     /**
      * @notice Get all pool addresses
      */
-    function getAllPools() external view returns (address[] memory _v2Pools, address[] memory _v3Pools) {
-        return (v2Pools, v3Pools);
+    function getAllPools() external view returns (
+        address[] memory _v2Pools,
+        address[] memory _v3Pools,
+        address[] memory _virtualsPools
+    ) {
+        return (v2Pools, v3Pools, virtualsPools);
     }
 }
