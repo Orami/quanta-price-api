@@ -14,6 +14,8 @@
     "price:ethers": "ts-node services/priceService.ts",
     "price:moralis": "ts-node services/moralisPriceService.ts",
     "deploy": "hardhat run scripts/deploy.ts --network base",
+    "deploy:rate-provider": "hardhat run scripts/deployRateProvider.ts --network base",
+    "update:oracle": "hardhat run scripts/updateOraclePrice.ts --network base",
     "compile": "hardhat compile",
     "test": "hardhat test"
   },

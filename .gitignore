@@ -21,6 +21,9 @@ cache/
 artifacts/
 typechain-types/
 
+# Deployment info (may contain sensitive addresses)
+deployment-info.json
+
 # IDE
 .vscode/
 .idea/
